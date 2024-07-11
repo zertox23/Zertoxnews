@@ -1,4 +1,5 @@
 import requests
+import requests_cache
 from stem import Signal
 from stem.control import Controller
 from dotenv import load_dotenv
@@ -6,6 +7,7 @@ import os
 import loguru
 import uuid
 import random
+requests_cache.install_cache('api_cache',expire_after=1800)
 load_dotenv()
 my_ip = os.environ.get("my_ip").strip()
 

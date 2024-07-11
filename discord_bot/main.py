@@ -21,6 +21,12 @@ async def on_ready():
     print("Bot is up and ready!")
     await bot.load_extension("background_tasks")
     try:
+        if not os.path.isdir("/imgs"):
+            try:
+                os.mkdir("/imgs")
+            except:
+                logger.error("/imgs Not found and unable to create it")
+                exit()
         synced = await bot.tree.sync()
         print(f"synced {len(synced)} command[s]")
     except Exception as e:

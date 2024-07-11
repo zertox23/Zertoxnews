@@ -1,7 +1,0 @@
-beautifulsoup4
-fastapi
-loguru
-pydantic
-python-dotenv
-Requests
-stem

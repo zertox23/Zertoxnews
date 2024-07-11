@@ -21,7 +21,6 @@ class Scraper:
         def extract_media_urls(tag, attributes):
             """Helper function to extract media URLs from a given tag and attributes."""
             media_tags = main_item.find_all(tag)
-            print(len(media_tags))
             media_urls = []
             for media in media_tags:
                 for attribute in attributes:
@@ -29,7 +28,7 @@ class Scraper:
                     if src:
                         media_urls.append(urljoin(url, src))
                         media.extract()
-                        break  # Stop at the first found attribute to avoid duplicates
+                        break  
             return media_urls
         
         image_attributes = ['src', 'data-src']
@@ -47,7 +46,7 @@ class Scraper:
         amaq = threading.Thread(target=self.get_last_amaq_news(),daemon=True)
         zalaqa = threading.Thread(target=self.get_last_zalaqa_news(),daemon=True)
         e = time.time() - t
-        print(e)
+        
         
     def get_last_news(self):
         articles = []
@@ -102,8 +101,16 @@ class Scraper:
             if '.mp4' in videos[0]:
                 x = self.amaq_url 
                 videos[0] = x.replace("?cat=467","")+videos[0]
+                try:
+                    div.find("a",class_="shortc-button small button").extract()
+                except:
+                    pass
             else:    
                 videos = []
+            try:
+                div.find("a",class_="shortc-button small button").extract()
+            except:
+                pass
             text = markdownify.markdownify(art.prettify())    
             articles.append(Article(title=title,img_url=img,url=url,date=date,author="Amaq News Agency | وكاله اعماق الاخباريه",brief=brief,article_text={"text":text,"images":images,"videos":videos}))
         
@@ -152,7 +159,7 @@ class Scraper:
             img = a.find("img")
             img = "https://alezza.media/"+img["pdf2tab"]
             date = "مجهول"
-            articles.append(Article(title="انفوجرافيك الزلاقه",img_url=img,url=url,date=date,author="Zalaqa | الزلاقه",brief=""))
+            articles.append(Article(title="انفوجرافيك الزلاقه",img_url=img,url=url,date=date,author="Zalaqa | الزلاقه",brief="",article_text={"text":"","images":[],"videos":[]}))
         
     
 

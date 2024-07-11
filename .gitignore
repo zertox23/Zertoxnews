@@ -4,3 +4,7 @@ logs_.log
 oldbot
 jmedia
 *.db
+work
+*.json
+__pycache__
+*.sqlite
