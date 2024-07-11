@@ -1,0 +1,16 @@
+FROM python:3.11
+
+WORKDIR /app
+
+COPY requirements.txt ./
+
+RUN pip install -r requirements.txt
+
+COPY . .
+
+ENV tor_password
+ENV aq_channel 
+ENV is_channel 
+ENV my_ip
+ENV TOKEN 
+CMD ["python3","main.py"]

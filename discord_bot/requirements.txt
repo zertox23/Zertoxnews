@@ -1,0 +1,11 @@
+aiohttp
+beautifulsoup4
+discord.py
+loguru
+pydantic
+python-dotenv
+Requests
+stem
+sqlalchemy
+mdformat
+mdformat-gfm

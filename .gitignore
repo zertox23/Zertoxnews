@@ -1,0 +1,6 @@
+venv
+logs_.log
+.env
+oldbot
+jmedia
+*.db
