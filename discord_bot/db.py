@@ -1,55 +1,55 @@
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, DateTime,LargeBinary
-from sqlalchemy.orm import declarative_base,mapped_column
-from sqlalchemy.orm import sessionmaker
 import datetime
-import io
+from sqlalchemy import create_engine, Column, BigInteger, String, DateTime,Text,BigInteger
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-global base
 Base = declarative_base()
 
 class DbStruct:
     class articles(Base):
         __tablename__ = "articles"
-        id = Column("id",Integer,autoincrement=True,primary_key=True)
-        img_url = Column("img_url",String)
-        title = Column("title",String)
-        url = Column("url",String)
-        date = Column("date",String)
-        author = Column("author",String)
-        brief = Column("brief",String)
-        article = Column("article",String)
+        id = Column(BigInteger, primary_key=True, autoincrement=True)
+        img_url = Column(String(255))
+        title = Column(String(255))
+        url = Column(String(255))
+        date = Column(DateTime, default=datetime.datetime.now)
+        author = Column(String(255))
+        brief = Column(String(255))
+        article = Column(Text())  
         
-        def __init__(self,img_url:str,title:str,url:str,author:str,brief:str,article:str,date:datetime.datetime=datetime.datetime.now()):
+        def __init__(self, img_url: str, title: str, url: str, author: str, brief: str, article: str, date: datetime.datetime = None):
             self.img_url = img_url
             self.title  = title
             self.url = url
-            self.date = date
+            self.date = date if date else datetime.datetime.now()
             self.author = author
             self.brief = brief
             self.article = article
 
     class channels(Base):
         __tablename__ = "channels"
-        id = Column("id",Integer,autoincrement=True,primary_key=True)
-        source = Column("source",String)
-        channel_id= Column("channel_id",Integer)
+        id = Column(BigInteger, primary_key=True, autoincrement=True)
+        source = Column(String(255))
+        channel_id = Column(BigInteger)
 
-        def __init__(self,source:str,channel_id:int):
-            self.source = source
-            self.channel_id = channel_id
+        def __init__(self, source: str, channel_id: int):
+            self.source = str(source)
+            self.channel_id = int(channel_id)
 
     class sources(Base):
         __tablename__ = "sources"
-        id = Column("id",Integer,autoincrement=True,primary_key=True)
-        source= Column("source",String)
+        id = Column(BigInteger, primary_key=True, autoincrement=True)
+        source = Column(String(255))
 
-        def __init__(self,source:str):
+        def __init__(self, source: str):
             self.source = source
 
+#print(f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@127.0.0.1:3306/{MYSQL_DATABASE}")
 class BotDb:
     def __init__(self) -> None:
-        engine = create_engine("mysql:///database.db")
+        engine = create_engine(f"mysql+pymysql://botuser:0531323535@127.0.0.1:3306/botdb")        
         Base.metadata.create_all(bind=engine)
         Session = sessionmaker(bind=engine)
         self.session = Session() 
         
+

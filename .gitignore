@@ -8,3 +8,8 @@ work
 *.json
 __pycache__
 *.sqlite
+alembic.ini
+alembic
+*.sqlite
+dockerfile
+.dockerignore

@@ -15,11 +15,11 @@ def latest_news():
 
     s = Scraper(my_ip)
     #s.get_all_news()
+    zalaqa = s.get_last_zalaqa_news()
     amaq = s.get_last_amaq_news()
     dawla= s.get_last_dawla_news()
     shahada = s.get_last_news()
-    zalaqa = s.get_last_zalaqa_news()
-    data = {"AmaqAgency":amaq,"DawlaNews":dawla,"ShahadaAgency":shahada,"ZalaqaInfoGraphics":zalaqa}
+    data = {"ZalaqaInfoGraphics":zalaqa,"AmaqAgency":amaq,"DawlaNews":dawla,"ShahadaAgency":shahada}
     
     return data
 
