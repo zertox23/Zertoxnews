@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, DateTime,LargeBinary
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base,mapped_column
 from sqlalchemy.orm import sessionmaker
 import datetime
 import io
@@ -28,9 +28,27 @@ class DbStruct:
             self.brief = brief
             self.article = article
 
+    class channels(Base):
+        __tablename__ = "channels"
+        id = Column("id",Integer,autoincrement=True,primary_key=True)
+        source = Column("source",String)
+        channel_id= Column("channel_id",Integer)
+
+        def __init__(self,source:str,channel_id:int):
+            self.source = source
+            self.channel_id = channel_id
+
+    class sources(Base):
+        __tablename__ = "sources"
+        id = Column("id",Integer,autoincrement=True,primary_key=True)
+        source= Column("source",String)
+
+        def __init__(self,source:str):
+            self.source = source
+
 class BotDb:
     def __init__(self) -> None:
-        engine = create_engine("sqlite:///database.db")
+        engine = create_engine("mysql:///database.db")
         Base.metadata.create_all(bind=engine)
         Session = sessionmaker(bind=engine)
         self.session = Session() 

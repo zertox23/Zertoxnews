@@ -10,3 +10,4 @@ class Article(BaseModel):
     author: Optional[str]=None
     brief: Optional[str]= None
     article_text: Optional[dict] = None
+    source: Optional[str] = None

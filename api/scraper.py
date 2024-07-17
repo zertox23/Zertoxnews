@@ -67,7 +67,7 @@ class Scraper:
             art = soup.find("article")
             images,videos = self.scrape_images_and_videos(art,url=self.shahada_agency_url)
             text= markdownify.markdownify(art.prettify())
-            articles.append(Article(title=title,url=url,date=date,author=author,brief=brief,img_url=img,article_text={"text":text,"images":images,"videos":videos}))
+            articles.append(Article(title=title,url=url,date=date,author=author,brief=brief,img_url=img,article_text={"text":text,"images":images,"videos":videos,},source="shahada_agency"))
         
         return articles
     
@@ -112,7 +112,7 @@ class Scraper:
             except:
                 pass
             text = markdownify.markdownify(art.prettify())    
-            articles.append(Article(title=title,img_url=img,url=url,date=date,author="Amaq News Agency | وكاله اعماق الاخباريه",brief=brief,article_text={"text":text,"images":images,"videos":videos}))
+            articles.append(Article(title=title,img_url=img,url=url,date=date,author="Amaq News Agency | وكاله اعماق الاخباريه",brief=brief,article_text={"text":text,"images":images,"videos":videos},source="amaq_agency"))
         
         return articles
 
@@ -138,7 +138,7 @@ class Scraper:
             art = soup.find("article")
             images , videos = self.scrape_images_and_videos(art,url=self.dawal_url.replace("?cat=485",""))
             text = markdownify.markdownify(art.prettify())
-            articles.append(Article(title=title,img_url=img,url=url,date=date,author="Dawla News | أخبار الدوله",brief=brief,article_text={"text":text,"images":images,"videos":videos}))
+            articles.append(Article(title=title,img_url=img,url=url,date=date,author="Dawla News | أخبار الدوله",brief=brief,article_text={"text":text,"images":images,"videos":videos},source="dawla_news"))
         
     
         return articles
@@ -159,7 +159,7 @@ class Scraper:
             img = a.find("img")
             img = "https://alezza.media/"+img["pdf2tab"]
             date = "مجهول"
-            articles.append(Article(title="انفوجرافيك الزلاقه",img_url=img,url=url,date=date,author="Zalaqa | الزلاقه",brief="",article_text={"text":"","images":[],"videos":[]}))
+            articles.append(Article(title="انفوجرافيك الزلاقه",img_url=img,url=url,date=date,author="Zalaqa | الزلاقه",brief="",article_text={"text":"","images":[],"videos":[]},source="zalaqa_news"))
         
     
 

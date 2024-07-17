@@ -7,6 +7,10 @@ from discord.ext import commands
 from discord.ext import tasks
 
 
+from db import DbStruct, BotDb
+
+session = BotDb().session
+
 logger.add("logs_.log")
 
 bot = commands.Bot(command_prefix="shabab", intents=discord.Intents.all())
@@ -19,7 +23,10 @@ print(type(TOKEN))
 @bot.event
 async def on_ready():
     print("Bot is up and ready!")
+    
     await bot.load_extension("background_tasks")
+    await bot.load_extension("commands")
+
     try:
         if not os.path.isdir("/imgs"):
             try:

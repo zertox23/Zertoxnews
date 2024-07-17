@@ -45,6 +45,9 @@ def latest_news():
     data = {"DawlaAgency":dawla}
     return data
 
+@app.get("/api/sources")
+def sources():
+    return {"sources":["amaq_agency","dawla_news","zalaqa_news","shahada_agency"]}
 if __name__ == "__main__":
     config = uvicorn.Config("api:app", port=2222, log_level="info")
     server = uvicorn.Server(config)

@@ -7,7 +7,7 @@ import os
 import loguru
 import uuid
 import random
-requests_cache.install_cache('api_cache',expire_after=1800)
+requests_cache.install_cache('api_cache',expire_after=900)
 load_dotenv()
 my_ip = os.environ.get("my_ip").strip()
 
