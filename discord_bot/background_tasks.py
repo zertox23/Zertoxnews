@@ -149,7 +149,7 @@ class BackgroundTasks(commands.Cog):
                             obj = DbStruct.articles(img_url=article["img_url"],title=article["title"],url=article["url"],author=article["author"],brief=article["brief"],article=None)
 
                     db.add(obj)
-#                    db.commit()
+                    db.commit()
             
             return sending_articles
 

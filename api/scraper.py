@@ -15,6 +15,7 @@ class Scraper:
         self.amaq_url  = "http://alraudzemjub7whxfmqxbmtt7lhz4qpqjydlrqzasbiymhk5bwkvxdid.onion/?cat=467"
         self.dawal_url = "http://alraudzemjub7whxfmqxbmtt7lhz4qpqjydlrqzasbiymhk5bwkvxdid.onion/?cat=485"
         self.zalaqa_url = "https://alezza.media/index.php?/category/33"
+        self.almirsad_url = "https://almirsadar.com/"
 
     def scrape_images_and_videos(self,main_item,url):
         """Scrapes images and videos from a webpage."""
@@ -161,6 +162,50 @@ class Scraper:
             date = "مجهول"
             articles.append(Article(title="انفوجرافيك الزلاقه",img_url=img,url=url,date=date,author="Zalaqa | الزلاقه",brief="",article_text={"text":"","images":[],"videos":[]},source="zalaqa_news"))
         
-    
+    def get_last_almirsad_news(self):
+        articles = []
+        r = send_request_through_tor(url=self.almirsad_url.strip(),method="GET")
+        soup = BeautifulSoup(r.content,"html.parser")
+        
+        results = soup.find("div",class_="jeg_tabpost_content")
+        
+        tab = results.find("div",id="jeg_tabpost_3")
+        res = tab.find_all("div",class_="jeg_postblock_content")
+        print(len(res))
+
+        for article in res:
+            a = article.find("a")
+            if a:
+                url = a["href"]
+
+            h3 = article.find("h3",class_="jeg_post_title")
+            title = h3.text
+            date = article.find("div",class_="jeg_meta_like")
+            if date:
+                date = date.text
+            
+            img = None
+            r = send_request_through_tor(url=url.strip(),method="GET")
+            soup = BeautifulSoup(r.content,"html.parser")
+            imgdiv = soup.find("div",class_="jeg_featured featured_image")
+            a = imgdiv.find("a")
+            if a:
+                img = a["href"]
+
+            text = soup.find("div",class_="content-inner")
+            removeddiv  = soup.find("div",class_="aioseo-author-bio-compact") # a div that i don't need in the final text
+            removeddiv.extract()
+            text = markdownify.markdownify(text.prettify())
+            with open("almirsad.html","w") as f:
+                f.write(soup.prettify())
+
+            with open("almirsad.md","w") as f:
+                f.write(text)
+
+            
+
+            articles.append(Article(title=title,img_url=img,url=url,date=date,author="Almirsad Agency | وكاله المرصاد",brief="",article_text={"text":text,"images":[],"videos":[]},source="almirsad_news"))
+
+        return articles    
 
 
