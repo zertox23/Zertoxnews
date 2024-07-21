@@ -161,6 +161,7 @@ class BackgroundTasks(commands.Cog):
                 sending_articles = looparticles(articles=value,sending_articles=sending_articles,db=self.db)
             
         sending_articles.reverse()
+        print("SENDING ARTICLES:"+str(len(sending_articles)))
         for article in sending_articles:
             print(len(sending_articles))
             print(str(article["source"]).capitalize())

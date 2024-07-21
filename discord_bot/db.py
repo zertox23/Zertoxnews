@@ -9,9 +9,9 @@ class DbStruct:
     class articles(Base):
         __tablename__ = "articles"
         id = Column(BigInteger, primary_key=True, autoincrement=True)
-        img_url = Column(String(255))
-        title = Column(String(255))
-        url = Column(String(255))
+        img_url = Column(Text())
+        title = Column(Text())
+        url = Column(Text())
         date = Column(DateTime, default=datetime.datetime.now)
         author = Column(String(255))
         brief = Column(String(255))

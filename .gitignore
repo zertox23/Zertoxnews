@@ -13,3 +13,5 @@ alembic
 *.sqlite
 dockerfile
 .dockerignore
+*.html
+*.md
