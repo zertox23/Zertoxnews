@@ -1,7 +1,10 @@
 beautifulsoup4
 fastapi
 loguru
+markdownify
 pydantic
 python-dotenv
 Requests
+requests_cache
 stem
+uvicorn

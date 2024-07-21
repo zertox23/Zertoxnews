@@ -2,6 +2,12 @@ import datetime
 from sqlalchemy import create_engine, Column, BigInteger, String, DateTime,Text,BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+import os 
+
+load_dotenv()
+MYSQL_URL = os.environ.get("MYSQL_URL")
+print("MYSQL_URL="+MYSQL_URL)
 
 Base = declarative_base()
 
@@ -44,10 +50,9 @@ class DbStruct:
         def __init__(self, source: str):
             self.source = source
 
-#print(f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@127.0.0.1:3306/{MYSQL_DATABASE}")
 class BotDb:
     def __init__(self) -> None:
-        engine = create_engine(f"mysql+pymysql://botuser:0531323535@127.0.0.1:3306/botdb")        
+        engine = create_engine(MYSQL_URL)        
         Base.metadata.create_all(bind=engine)
         Session = sessionmaker(bind=engine)
         self.session = Session() 

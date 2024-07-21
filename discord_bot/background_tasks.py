@@ -20,7 +20,13 @@ import glob
 from api import Api
 
 load_dotenv()
+proxy = str(os.environ.get("proxy"))
 
+
+
+timer = int(os.environ.get("time_between_checks"))
+if timer < 3:
+    timer = 3
 
 logger.add("logs_.log")
 def split_text_by_character_limit(text, char_limit):
@@ -43,7 +49,7 @@ def split_text_by_character_limit(text, char_limit):
 
     return segments
 async def download_img_through_tor(url: str, folder: str, method: str = "GET"):
-    tor_proxy = '127.0.0.1:8118'  # Assuming Tor proxy is running locally
+    tor_proxy = proxy  # Assuming Tor proxy is running locally
 
     response = requests.get('http://icanhazip.com/', proxies={'http':tor_proxy})
     current_ip = response.text
@@ -129,7 +135,8 @@ class BackgroundTasks(commands.Cog):
             messages.append(await channel.send(**kwargs))
         
         return messages
-    @tasks.loop(minutes=15)
+    
+    @tasks.loop(minutes=timer)
     async def get_latest_news(self):
         def looparticles(articles: list,sending_articles: list,db:sqlalchemy.orm.Session):
            
@@ -187,7 +194,7 @@ class BackgroundTasks(commands.Cog):
             embed.set_author(name=article["author"])
             embed.set_footer(text=f"كُتب في {article['date']}")
             print("onion" in article["img_url"] or article["source"] in ["zalaqa_news"])
-            if "onion" in article["img_url"] or article["source"] in ["zalaqa_news"]:
+            if "onion" in article["img_url"] or str(article["source"]) in ["zalaqa_news"]:
                 d = await down_media(article["img_url"],embed=embed)
                 if d["path"]:
                     
@@ -242,12 +249,13 @@ class BackgroundTasks(commands.Cog):
             except Exception as e:
                 logger.error(e)
 
-            #files = glob.glob("/imgs/" + '*')
-            #for file in files:
-                #try:
-            #        os.remove(file)
-                #except Exception as e:
-                #    logger.error(e) 
+            files = glob.glob("/imgs/" + '*')
+            for file in files:
+                try:
+                    os.remove(file)
+                except Exception as e:
+                    logger.error(e)
+
         #except Exception as e:
         #        logger.error(e) 
 

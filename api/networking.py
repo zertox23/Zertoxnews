@@ -10,19 +10,21 @@ import random
 requests_cache.install_cache('api_cache',expire_after=900)
 load_dotenv()
 my_ip = os.environ.get("my_ip").strip()
+proxy = str(os.environ.get("proxy"))
 
-
+"""
 def get_new_ip():
     with Controller.from_port(port=9051) as controller:
         controller.authenticate(password='P@ss0987')
         controller.signal(Signal.NEWNYM)
 
+"""
 
 def send_request_through_tor(url:str,method:str):
-    if random.choice([1,2,3,4,5,6,7,8,9,10]) == 2:
-        get_new_ip()
+#    if random.choice([1,2,3,4,5,6,7,8,9,10]) == 2:
+#        get_new_ip()
 
-    response = requests.get('http://icanhazip.com/', proxies={'http': '127.0.0.1:8118'})
+    response = requests.get('http://icanhazip.com/', proxies={'http': proxy})
     print(response.text.strip(),my_ip)
     if response.text.strip() == my_ip:
         return False
@@ -31,13 +33,13 @@ def send_request_through_tor(url:str,method:str):
             try:
                 print(url)
                 user_agent = {'User-agent': 'Mozilla/5.0'}
-                r = requests.get(url=url,proxies={'http': '127.0.0.1:8118'},headers=user_agent)
+                r = requests.get(url=url,proxies={'http': proxy},headers=user_agent)
                 return r
             except Exception as e:
                 loguru.logger.error(e)
         elif method.upper() == "POST":
             try:
-                return requests.post(url=url,proxies={'http': '127.0.0.1:8118'})     
+                return requests.post(url=url,proxies={'http': proxy})     
             except Exception as e:
                 loguru.logger.error(e)
 

@@ -1,20 +1,10 @@
 FROM python:3.11
 
-# Install Tor and Privoxy
-RUN apt-get update && \
-    apt-get install -y tor privoxy && \
-    rm -rf /var/lib/apt/lists/*
-
-# Configure Tor
-RUN echo "ControlPort 9051" >> /etc/tor/torrc && \
-    echo HashedControlPassword $(tor --hash-password '1\Dx&00£4i\(>5BgA0@k?m:"/$]l>' | tail -n 1) >> /etc/tor/torrc
-# Configure Privoxy
-RUN echo "forward-socks5t / 0.0.0.0:9050 ." >> /etc/privoxy/config && \
-    sed -i "s/.*\[::1\]:8118/# &/" /etc/privoxy/config
 
 
-
-WORKDIR /app
+RUN useradd -ms /bin/bash api
+USER api
+WORKDIR /home/api/src
 
 COPY requirements.txt ./
 
@@ -22,11 +12,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-ENV my_ip=185.182.185.42
-
 EXPOSE 2222
 
 #CMD ["service","tor","status"]
-CMD service tor start && \
-    service privoxy start && \
-    fastapi dev api.py --port 2222 --host 0.0.0.0
+CMD ["python3","api.py"]

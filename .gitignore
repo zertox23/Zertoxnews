@@ -3,7 +3,6 @@ logs_.log
 .env
 oldbot
 jmedia
-*.db
 work
 *.json
 __pycache__
@@ -15,3 +14,4 @@ dockerfile
 .dockerignore
 *.html
 *.md
+imgs

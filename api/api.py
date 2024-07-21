@@ -51,7 +51,7 @@ def sources():
     return {"sources":["amaq_agency","dawla_news","zalaqa_news","shahada_agency","almirsad_news"]}
 
 if __name__ == "__main__":
-    config = uvicorn.Config("api:app", port=2222, log_level="info")
+    config = uvicorn.Config("api:app", port=2222, log_level="info",host="0.0.0.0")
     server = uvicorn.Server(config)
     server.run()
 

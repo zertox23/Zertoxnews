@@ -1,7 +1,10 @@
 import aiohttp
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 class Api:
-    def __init__(self,api_url="http://127.0.0.1:2222"):
+    def __init__(self,api_url=str(os.environ.get("api_url"))):
         self.api_url = api_url
         return None
     
