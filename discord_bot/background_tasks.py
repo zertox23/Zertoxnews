@@ -2,13 +2,10 @@ import discord
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 import os
-import json
 import requests
-import aiohttp
 from loguru import logger
 import re
 import uuid
-import aiofiles
 from chunkify import chunkify
 import sqlalchemy.orm
 from db import BotDb,DbStruct 
@@ -17,10 +14,13 @@ import sqlalchemy
 import textwrap
 import mdformat
 import glob
+import uuid
 from api import Api
+import io
 
 load_dotenv()
 proxy = str(os.environ.get("proxy"))
+
 
 
 
@@ -45,7 +45,12 @@ def split_text_by_character_limit(text, char_limit):
             current_segment += line + '\n'
 
     if current_segment:
-        segments.append(current_segment.rstrip())
+        current_segment = current_segment.rstrip()
+        current_segment2 = mdformat.text(current_segment,extensions=["gfm"])
+        if len(current_segment2) >= 1999:
+            segments.extend(split_text_by_character_limit(current_segment,char_limit=1500))
+        else:     
+            segments.append(current_segment2)
 
     return segments
 async def download_img_through_tor(url: str, folder: str, method: str = "GET"):
@@ -62,12 +67,8 @@ async def download_img_through_tor(url: str, folder: str, method: str = "GET"):
             r = requests.get(url, proxies={'http':tor_proxy}, headers={'User-agent': 'Mozilla/5.0'})
             if r.status_code == 200:
                 img_data = r.content
-                image_name = str(uuid.uuid4()) + '.jpg'
-                image_path = os.path.join(folder, image_name)
-                with open(image_path, 'wb') as f:
-                    f.write(img_data)
-
-                return str(image_path)
+                image_name = str(uuid.uuid4()) +'.png'
+                return [str(image_name),img_data]
         except Exception as e:
             logger.error(f"Error occurred: {e}")
             return False
@@ -79,7 +80,7 @@ async def download_img_through_tor(url: str, folder: str, method: str = "GET"):
             if d.status_code == 200:
                 response = d.json()
                 download_page = response["data"]["downloadPage"]
-                return download_page
+                return [download_page,video_data]
         return False
 
 def rnewlines(text: str):
@@ -92,26 +93,29 @@ def rnewlines(text: str):
     
     return text
 
-async def down_media(url,embed):
-    print(url)
+async def down_media(url,embed,db,article_id):
     path = await download_img_through_tor(url=url, folder=os.getcwd() + "/imgs")
-    print(path)
     if path:
-        if "http" in path:
+        if "http" in path[0]:
             pass
         else:
+            name = path[0]
+            image_bytes = io.BytesIO(path[1])
+            file = discord.File(fp=image_bytes, filename=name)
+            path[0] = file
+
             if embed:
-                embed.set_image(url=f"attachment://{os.path.basename(path)}")
+                embed.set_image(url=f"attachment://{name}")
 
-    if "http" in path:
-        media = "video"
+    print(path[0])
+    if isinstance(path[0],str):
+        print(path[0])
+        media = "video/mp4"
     else:
-        media = "image"
-    if "http" in path:
-        media = "video"
-    else:    
-        media = "image"
-
+        media = "image/png"
+    
+    db.add(DbStruct.ArticleMedia(article_id=int(article_id),file_data=path[1],media_type=media))
+    db.commit()
     return {"media_type":media,"path":path}
 
 class BackgroundTasks(commands.Cog):
@@ -130,7 +134,7 @@ class BackgroundTasks(commands.Cog):
             if embed:
                 kwargs['embed'] = embed
             if file:
-                kwargs['file'] = discord.File(file)
+                kwargs['file'] = file
             
             messages.append(await channel.send(**kwargs))
         
@@ -157,7 +161,7 @@ class BackgroundTasks(commands.Cog):
 
                     db.add(obj)
                     db.commit()
-            
+                    sending_articles[-1]["id"] = db.query(DbStruct.articles).filter(DbStruct.articles.url == sending_articles[-1]["url"]).first().id
             return sending_articles
 
         
@@ -170,20 +174,16 @@ class BackgroundTasks(commands.Cog):
         sending_articles.reverse()
         print("SENDING ARTICLES:"+str(len(sending_articles)))
         for article in sending_articles:
-            print(len(sending_articles))
-            print(str(article["source"]).capitalize())
             send_channels = self.db.query(DbStruct.channels).filter(DbStruct.channels.source == str(article["source"])).all()
             send_channels = [int(x.channel_id) for x in send_channels]
             send_channels_list = []
             for id in send_channels:
                 try:
                     channel = self.bot.get_channel(id)
-                    print(channel)
                     send_channels_list.append(channel)
                 except Exception as e:
                     logger.error(str(e))
 
-            print(send_channels_list)
 
 
 #        try:
@@ -193,62 +193,56 @@ class BackgroundTasks(commands.Cog):
             embed.url = article["url"]
             embed.set_author(name=article["author"])
             embed.set_footer(text=f"كُتب في {article['date']}")
-            print("onion" in article["img_url"] or article["source"] in ["zalaqa_news"])
             if "onion" in article["img_url"] or str(article["source"]) in ["zalaqa_news"]:
-                d = await down_media(article["img_url"],embed=embed)
-                if d["path"]:
+                d = await down_media(article["img_url"],embed=embed,article_id=article["id"],db=self.db)
+                if d["path"][0]:
+                    if d["media_type"] == "video/mp4":           
+                        messages = await self.send(channels=send_channels_list,message=f"🎥 [رابط تحميل الفيديو المرفق]({d['path'][0]})",embed=embed)
+                    elif d["media_type"] == "image/png":
+                            messages = await self.send(channels=send_channels_list,embed=embed, file=d["path"][0])
                     
-                    if d["media_type"] == "video":           
-                        messages = await self.send(channels=send_channels_list,message=f"🎥[رابط تحميل الفيديو المرفق]({d['path']})🎥",embed=embed)
-                    elif d["media_type"] == "image":
-                            messages = await self.send(channels=send_channels_list,embed=embed, file=d['path'])
-                    
-                    os.remove(d['path'])
-
             else:
-                print("in else")
                 embed.set_image(url=article["img_url"])
                 messages = await self.send(channels=send_channels_list,embed=embed)
 
             article_data = article["article_text"]
-            try:
 
-                if article_data["text"]:
-                    try:
-                        article_text = split_text_by_character_limit(article_data["text"],2000)
-                    except:
-                        article_text = [None]
-                    for message in messages:
-                #           try:
-                            t = await message.create_thread(name=article["title"][:99])
-                            for text in article_text:
+            if article_data["text"]:
+                try:
+                    article_text = split_text_by_character_limit(article_data["text"],2000)
+                except:
+                    article_text = [None]
+                for message in messages:
+            #           try:
+                        t = await message.create_thread(name=article["title"][:99])
+                        for text in article_text:
+                                if (len(text) >= 1):
+                                    await t.send(content=text)
+
+                        if article_data["images"]:
+                            for image in article_data["images"]:
+#                                   try:
+                                    d = await down_media(str(image),embed=False,article_id=article["id"],db=self.db)
+                                    print(type(d["path"][0]))
+                                    print(d["path"][0].filename)
+
+                                    if isinstance(d["path"][0],discord.file.File):
+                                        print(d["path"][0].filename)
+                                        print(type(d["path"][0]))
+                                        d['path'][0].filename =  "SPOILER_"+d['path'][0].filename
+                                        await t.send(file=d["path"][0])
                                 
-                                await t.send(content=mdformat.text(md=text,extensions=["gfm"]))
-                            if article_data["images"]:
-                                for image in article_data["images"]:
-    #                                   try:
-                                        d = await down_media(str(image),embed=False)
-                                        if d["path"]:
-                                            file = discord.File(d['path'],filename="SPOILER_"+str(uuid.uuid4())+".jpg")
-                                            await t.send(file=file)
-                                        else:
-                                            await t.send(d["path"]) 
+#                                    except Exception as e:
+            #                          logger.error(e)
 
-    #                                    except Exception as e:
-                #                          logger.error(e)
+                        if article_data["videos"]:
+                            for vid in article_data["videos"]:
+                                d = await down_media(vid,embed=False,article_id=article["id"],db=self.db)
+                                if d["media_type"] == "video/mp4":
 
-                            if article_data["videos"]:
-                                for vid in article_data["videos"]:
-                                    d = await down_media(vid,embed=False)
-                                    if d["media_type"] == "video":
-                                        await t.send(d['path'])
-                                    else:
-                                        if d["media_type"] == "image":
-                                            d = discord.File(d['path']).filename = "SPOILER_"+d['path'].filename
-                                            await t.send(file=d)
-            except Exception as e:
-                logger.error(e)
-
+                                    print("VID: "+d["path"][0])
+                                    await t.send(d['path'][0])
+                                
             files = glob.glob("/imgs/" + '*')
             for file in files:
                 try:
