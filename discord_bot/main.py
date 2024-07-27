@@ -5,7 +5,7 @@ from loguru import logger
 from discord import app_commands
 from discord.ext import commands
 from discord.ext import tasks
-
+import sys
 
 from db import DbStruct, BotDb
 
@@ -22,6 +22,23 @@ print(type(TOKEN))
 
 @bot.event
 async def on_ready():
+    guilds = bot.guilds
+    print(guilds)
+    '''
+    for guild in guilds.values():
+        guild = bot.get_guild(guild)
+        if len(sys.argv) > 1 and sys.argv[1] == "check":
+            channel_names = session.query(DbStruct.sources).all()
+
+            for cat in guild.categories:
+                channels = [channel.name for channel in cat.text_channels]
+                for channel_source in channel_names:
+                    print(channel_source.source)
+                    if channel_source.source not in channels:
+                        obj = DbStruct.channels(source=channel_source.source, channel_id=channel.id)            
+                        session.add(obj)
+                        session.commit()
+    ''' 
     print("Bot is up and ready!")
     
     await bot.load_extension("background_tasks")

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}أهل الحق | الاخبار{% endblock %}
+
+
+{% block content %}
+    <section id="home">
+        <h2 class="rtl">أخر الاخبار</h2>
+        {% with news|first as first_article %}
+        <article class="main-article hovermelittle">
+            <img  src="{% url 'serve_media' media_id=first_article.id%}1" alt="{{ first_article.title }}" onclick="location.href='/articles/{{first_article.id}}'">
+            <h3 class="hoverme" onclick="location.href='/articles/{{first_article.id}}'">{{ first_article.title }}</h3>
+        </article>
+        {% endwith %}
+        <div class="other-articles">
+            {% for article in news|slice:"1:" %}
+            <article class="hoverme" onclick="location.href='/articles/{{article.id}}'">
+                <img src="{% url 'serve_media' media_id=article.id %}1" alt={{ article.title }}" onclick="location.href='/articles/{{article.id}}'">
+                <h3 onclick="location.href='/articles/{{article.id}}'">{{ article.title }}</h3>
+            </article>
+            {% endfor %}
+        </div>
+        <div class="pagination">
+            {% if current_page > 1 %}
+                <a href="{% url 'index_paginated' current_page|add:"-1" %}">&laquo; Previous</a>
+            {% endif %}
+            
+            {% for num in page_numbers %}
+                <a href="{% url 'index_paginated' num %}" class="{% if num == current_page %}active{% endif %}">{{ num }}</a>
+            {% endfor %}
+            
+            {% if current_page < total_pages %}
+                <a href="{% url 'index_paginated' current_page|add:"1" %}">Next &raquo;</a>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

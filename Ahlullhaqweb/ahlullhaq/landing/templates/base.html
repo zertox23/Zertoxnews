@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href='static/favicon.png'>
+    <style>
+        /* Base Styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .title {
+            font-family: "Noto Nastaliq Urdu", sans-serif;
+            font-size: 48px;
+            color: #bb86fc;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #1e1e1e;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        header h1 {
+            margin: 0;
+            color: #bb86fc;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 1rem;
+        }
+
+        nav ul li a {
+            color: #bb86fc;
+            text-decoration: none;
+        }
+        
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        nav ul li .logout-btn {
+            background-color: #bb86fc;
+            color: #1e1e1e;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        nav ul li .logout-btn:hover {
+            background-color: #9b65d4;
+        }
+
+        /* Main content styles */
+        main {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            color: #bb86fc;
+        }
+
+        .main-article {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .main-article img {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        .main-article h3 {
+            color: #bb86fc;
+        }
+
+        .other-articles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .other-articles article {
+            flex: 1 1 calc(33.333% - 1rem);
+            background-color: #1e1e1e;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .other-articles img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .other-articles h3 {
+            color: #bb86fc;
+            margin: 0.5rem 0;
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            background-color: #bb86fc;
+            color: #1e1e1e;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: transform 0.3s, background-color 0.3s;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .pagination a:hover {
+            transform: scale(1.1);
+            background-color: #9b65d4;
+        }
+
+        .pagination .active {
+            background-color: #9b65d4;
+            color: #e0e0e0;
+            cursor: default;
+            transform: scale(1.1);
+        }
+
+        /* Messages styles */
+        .messages {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 5px;
+            background-color: #333;
+            color: #e0e0e0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .message {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 3px;
+            background-color: #444;
+        }
+
+        .message.info {
+            background-color: #2196F3;
+        }
+
+        .message.success {
+            background-color: #4CAF50;
+        }
+
+        .message.warning {
+            background-color: #FF9800;
+        }
+
+        .message.error {
+            background-color: #F44336;
+        }
+
+        .message .close-btn {
+            float: right;
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #1e1e1e;
+            text-align: center;
+            padding: 1rem;
+            border-top: 1px solid #333;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        #contact {
+            background-color: #1e1e1e;
+            padding: 1rem;
+            margin-top: 2rem;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #contact p {
+            margin: 0.5rem 0;
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+
+        #contact a {
+            color: #bb86fc;
+            text-decoration: none;
+        }
+
+        #contact a:hover {
+            text-decoration: underline;
+        }
+
+        .article img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+        }
+
+        .article h1 {
+            color: #bb86fc;
+            margin-bottom: 1rem;
+        }
+
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .article p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            nav ul li {
+                display: block;
+                margin: 0.5rem 0;
+            }
+
+            .other-articles article {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+        }
+        .hovermelittle {
+            transition: transform 0.3s ease-out;
+        }
+        
+        .hovermelittle:hover {
+            transform: translate3d(12px, -2%, 1em);
+
+        }
+
+        .hoverme{
+            transition: transform 0.3s ease-out;
+        }
+        
+        .hoverme:hover {
+            background-color: #141414;
+            transform: translate3d(15px, -5%, 2em);
+        }
+        @media (max-width: 480px) {
+            .title {
+                font-size: 36px;
+            }
+
+            .main-article img {
+                max-width: 100%;
+            }
+        }
+
+    </style>
+    <title>{% block title %}أهل الحق{% endblock %}</title>
+    {% block style %}
+    {% endblock %}
+</head>
+<body>
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <header>
+        <h1 class="title">أهل الحق</h1>
+        <nav>
+            <ul>
+                <li><a href="/1#home">الاخبار</a></li>
+                <li><a href="#contact">للتواصل</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}" class="logout-btn">تسجيل خروج</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}
+        <!-- Default content block -->
+        {% endblock %}
+    </main>
+    <footer>
+        <div id="contact">
+            <p>Email: <a href="mailto:Potato@gmail.com">Potato@gmail.com</a></p>
+            <p>Discord: <a href="https://discord.gg/ePrxjUtE3u" target="_blank">https://discord.gg/ePrxjUtE3u</a></p>
+        </div>
+        <p>&copy; أهل الحق 2024</p>
+    </footer>
+</body>
+</html>

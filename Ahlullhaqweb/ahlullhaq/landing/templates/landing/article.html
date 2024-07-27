@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article class="article rtl">
+    <div class="article-header">
+        <img src="{% url 'serve_media' media_id=article.id %}1" alt="Article Image" class="article-image">
+    </div>
+    <div class="article-content">
+        <p>{{ article.article|safe }}</p>
+        {% if article.media_items %}
+            <div class="media-container">
+                {% for media in article.media_items %}
+                    {% if media.is_video %}
+                        <div class="media-wrapper">
+                            <video controls>
+                                <source src="{% url 'serve_media' media_id=media.id %}" type="{{ media.media_type }}">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    {% elif media.is_image %}
+                        <img src="{% url 'serve_media' media_id=media.id %}" alt="صوره توضيحيه" class="media-image">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</article>
+{% endblock %}

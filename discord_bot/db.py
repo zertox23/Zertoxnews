@@ -1,6 +1,6 @@
 import datetime
 from sqlalchemy import create_engine, Column, BigInteger, String, DateTime, Text, ForeignKey
-from sqlalchemy.dialects.mysql import LONGTEXT, LONGBLOB
+from sqlalchemy.dialects.mysql import LONGTEXT, LONGBLOB,BOOLEAN
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from dotenv import load_dotenv
@@ -16,7 +16,6 @@ class DbStruct:
     class articles(Base):
         __tablename__ = "articles"
         id = Column(BigInteger, primary_key=True, autoincrement=True)
-        img_url = Column(Text, nullable=True)
         title = Column(Text, nullable=False)
         url = Column(Text, nullable=False)
         date = Column(DateTime, default=datetime.datetime.now, nullable=True)
@@ -26,8 +25,7 @@ class DbStruct:
         
         media = relationship("ArticleMedia", back_populates="article")
 
-        def __init__(self, img_url: str, title: str, url: str, author: str, brief: str, article: str, date: datetime.datetime = None):
-            self.img_url = img_url
+        def __init__(self, title: str, url: str, author: str, brief: str, article: str, date: datetime.datetime = None):
             self.title = title
             self.url = url
             self.date = date if date else datetime.datetime.now()
@@ -42,13 +40,14 @@ class DbStruct:
         article_id = Column(BigInteger, ForeignKey('articles.id'), nullable=False)
         file_data = Column(LONGBLOB, nullable=False)  # Consider using Binary for actual file data
         media_type = Column(String(255), nullable=False)
-
+        img_main = Column(BOOLEAN,nullable=True)
         article = relationship("articles", back_populates="media")
 
-        def __init__(self, article_id: int, file_data: bytes, media_type: str):
+        def __init__(self, article_id: int, file_data: bytes, media_type: str,img_main:bool):
             self.article_id = article_id
             self.file_data = file_data
             self.media_type = media_type
+            self.img_main = img_main
 
     class channels(Base):
         __tablename__ = "channels"

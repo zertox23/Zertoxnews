@@ -93,7 +93,7 @@ def rnewlines(text: str):
     
     return text
 
-async def down_media(url,embed,db,article_id):
+async def down_media(url,embed,db,article_id,article_img=False):
     path = await download_img_through_tor(url=url, folder=os.getcwd() + "/imgs")
     if path:
         if "http" in path[0]:
@@ -113,8 +113,12 @@ async def down_media(url,embed,db,article_id):
         media = "video/mp4"
     else:
         media = "image/png"
-    
-    db.add(DbStruct.ArticleMedia(article_id=int(article_id),file_data=path[1],media_type=media))
+    if article_img:
+        pass
+    else:
+        article_img = False
+
+    db.add(DbStruct.ArticleMedia(article_id=int(article_id),file_data=path[1],media_type=media,img_main=article_img))
     db.commit()
     return {"media_type":media,"path":path}
 
@@ -155,9 +159,9 @@ class BackgroundTasks(commands.Cog):
                     else:
                         if article["article_text"]["text"]:
                             text  = article["article_text"]["text"]
-                            obj = DbStruct.articles(img_url=article["img_url"],title=article["title"],url=article["url"],author=article["author"],brief=article["brief"],article=mdformat.text(md=text,extensions=["gfm"]))
+                            obj = DbStruct.articles(title=article["title"],url=article["url"],author=article["author"],brief=article["brief"],article=mdformat.text(md=text,extensions=["gfm"]))
                         else:
-                            obj = DbStruct.articles(img_url=article["img_url"],title=article["title"],url=article["url"],author=article["author"],brief=article["brief"],article=None)
+                            obj = DbStruct.articles(title=article["title"],url=article["url"],author=article["author"],brief=article["brief"],article=None)
 
                     db.add(obj)
                     db.commit()
@@ -193,17 +197,13 @@ class BackgroundTasks(commands.Cog):
             embed.url = article["url"]
             embed.set_author(name=article["author"])
             embed.set_footer(text=f"كُتب في {article['date']}")
-            if "onion" in article["img_url"] or str(article["source"]) in ["zalaqa_news"]:
-                d = await down_media(article["img_url"],embed=embed,article_id=article["id"],db=self.db)
-                if d["path"][0]:
-                    if d["media_type"] == "video/mp4":           
-                        messages = await self.send(channels=send_channels_list,message=f"🎥 [رابط تحميل الفيديو المرفق]({d['path'][0]})",embed=embed)
-                    elif d["media_type"] == "image/png":
-                            messages = await self.send(channels=send_channels_list,embed=embed, file=d["path"][0])
-                    
-            else:
-                embed.set_image(url=article["img_url"])
-                messages = await self.send(channels=send_channels_list,embed=embed)
+            d = await down_media(article["img_url"],embed=embed,article_id=article["id"],db=self.db,article_img=True)
+            if d["path"][0]:
+                if d["media_type"] == "video/mp4":           
+                    messages = await self.send(channels=send_channels_list,message=f"🎥 [رابط تحميل الفيديو المرفق]({d['path'][0]})",embed=embed)
+                elif d["media_type"] == "image/png":
+                        messages = await self.send(channels=send_channels_list,embed=embed, file=d["path"][0])
+                
 
             article_data = article["article_text"]
 
