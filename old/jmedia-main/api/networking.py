@@ -32,7 +32,7 @@ def send_request_through_tor(url:str,method:str):
         if method.upper() == "GET":    
             try:
                 print(url)
-                user_agent = {'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0'}
+                user_agent = {'User-agent': 'Mozilla/5.0'}
                 r = requests.get(url=url,proxies={'http': proxy},headers=user_agent)
                 return r
             except Exception as e:

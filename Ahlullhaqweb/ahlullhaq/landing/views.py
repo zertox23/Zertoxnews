@@ -41,12 +41,16 @@ def remove_whitespace_characters(text):
     return text
 
 
-def index(request,page:int=1):
+def index(request,page:int=1,source:str=None):
     if request.user.is_authenticated:
         articles_per_page = 7
         start = (page - 1) * articles_per_page
         end = start + articles_per_page
-        articles = Article.objects.all().order_by('-id')[start:end]
+        if not source:
+            articles = Article.objects.all().order_by('-id')[start:end]
+        else:
+            articles = Article.objects.filter(Article.author == source).all().order_by('-id')[start:end]
+
         for article in articles:
             article.title = remove_whitespace_characters(article.title)
         # Total number of pages

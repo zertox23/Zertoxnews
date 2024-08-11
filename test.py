@@ -1,0 +1,1 @@
+{'https://www.bakhtarnews.af/ar/category/news-ar/': {'articles_parent': {'element': 'ul', 'attrs': {'id': 'posts-container'}}, 'article_obj': {'element': 'li', 'attrs': {'class': 'post-item'}}, 'href': {'a': 'href'}}}

@@ -1,3 +1,5 @@
+version: '3'
+
 services:
   
   privoxy:
@@ -15,14 +17,12 @@ services:
       - MYSQL_DATABASE=botdb
       - MYSQL_PASSWORD=123456789010
 
-    ports:
-      - 3306:3306
   discord_bot:
     build: "./discord_bot"
     environment:
       - proxy=http://privoxy:8118 #leave as it is
       - api_url=http://api:2222 #leave as it is
-      - TOKEN=MTI1MzE1MjkzODU0NTY0NzYxNg.GWLLid.K6G2TNH8HBROCyaw1zDl4DcE1AzmFr8fXXBOBU #YOUR BOT TOKEN
+      - TOKEN=MTI1MzE1MjkzODU0NTY0NzYxNg.GLmhzl.W3ecriD7TdymPmyqlMSPkrOxcrQElimscML5tA #YOUR BOT TOKEN
       - MYSQL_URL=mysql+pymysql://botuser:123456789010@db:3306/botdb
       - time_between_checks=15
       - my_ip=185.182.185.42 # YOUR SERVER IP
@@ -35,7 +35,7 @@ services:
   api:
     build: "./api"
     environment:
-      - my_ip=185.182.185.42
+      - my_ip= #YOUR SERVER IP
       - proxy=http://privoxy:8118
 
     ports:
@@ -44,4 +44,4 @@ services:
       - privoxy
       - db  
 volumes:
-  mysql-data:
+        mysql-data:

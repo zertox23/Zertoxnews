@@ -1,0 +1,17 @@
+venv
+logs_.log
+.env
+oldbot
+jmedia
+work
+*.json
+__pycache__
+*.sqlite
+alembic.ini
+alembic
+*.sqlite
+dockerfile
+.dockerignore
+*.html
+*.done
+imgs

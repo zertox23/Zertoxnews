@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,13 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'aZvtyN/sjOEPSjqIHdN98Vs2FAIFfBnP1ZVY+aSaDBUXFCtJXJkwNLtRM/e77g8C'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG")
 
-ALLOWED_HOSTS = ["185.182.185.42","khs5mdq7pb7dtphe546vd3qkvf6rxpfjnd4uu4v3cgxmniibelj62mad.onion","127.0.0.1"]
-
+ALLOWED_HOSTS = ["185.182.185.42"]
 
 
 # Application definition
@@ -77,13 +78,15 @@ WSGI_APPLICATION = 'ahlullhaq.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
+print(os.environ.get("DB"))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'botdb',
         'USER': 'botuser',
         'PASSWORD': '123456789010',
-        'HOST': '127.0.0.1',
+        'HOST': os.environ.get("DB"),
         'PORT': '3306',
     }
 

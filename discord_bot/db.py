@@ -22,17 +22,17 @@ class DbStruct:
         author = Column(String(255), nullable=True)
         brief = Column(String(255), nullable=True)
         article = Column(LONGTEXT, nullable=True)
-        
+        img_url = Column(Text, nullable=False)        
         media = relationship("ArticleMedia", back_populates="article")
 
-        def __init__(self, title: str, url: str, author: str, brief: str, article: str, date: datetime.datetime = None):
+        def __init__(self,title: str, url: str, author: str, brief: str, article: str, date: datetime.datetime = None,img_url=None):
             self.title = title
             self.url = url
             self.date = date if date else datetime.datetime.now()
             self.author = author
             self.brief = brief
             self.article = article
-
+            self.img_url = img_url
 
     class ArticleMedia(Base):
         __tablename__ = "articles_media"

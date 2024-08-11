@@ -10,4 +10,3 @@ SQLAlchemy==2.0.31
 pymysql
 mdformat-gfm
 cryptography
-requests[socks]

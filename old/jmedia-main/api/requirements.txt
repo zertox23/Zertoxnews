@@ -8,4 +8,3 @@ Requests
 requests_cache
 stem
 uvicorn
-requests[socks]
