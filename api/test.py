@@ -1,1 +1,1 @@
-{'https://tolonews.com/afghanistan/all': {'articles_parent': {'element': 'div', 'attrs': {'class': 'view-content'}}, 'article_obj': {'element': 'ul', 'attrs': {'class': 'list-post'}}, 'href': {'li': 'class'}}}
+{'https://alezza.media/index.php?/category/34': {'articles_parent': {'element': 'ul', 'attrs': {'id': 'thumbnails'}}, 'article_obj': {'element': 'li', 'attrs': {'class': 'gdthumb'}}, 'href': {'a': 'href'}}}

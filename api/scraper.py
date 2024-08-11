@@ -12,8 +12,10 @@ from urllib.parse import urljoin
 
 
 def fetch_og_metadata(url):
+    print(url)
     response = send_request_through_tor(url,method="GET")
-    if response.status_code == 200:
+    print(response.status_code)
+    if response.status_code != 404:
         soup = BeautifulSoup(response.content, 'html.parser')
         og_title = soup.find('meta', property='og:title')
         og_description = soup.find('meta', property='og:description')
@@ -275,20 +277,34 @@ class Scraper:
                 for result in results:
                     x = result.find('a')["href"]
                     if x:
+                        if not str(x).startswith('http'):
+                            x= domain+x
+                            x= "http://"+x
                         articles[domain].append(fetch_og_metadata(str(x)))
         return articles
 
     def test_new_web(self, scrapes):
         articles = {}
+        detailed_data = {
+            "total_requests": 0,
+            "successful_requests": 0,
+            "failed_requests": 0,
+            "articles_found": 0,
+            "articles_processed": 0,
+            "errors": []
+        }
         
         for url in scrapes:
             domain = urlparse(url).netloc
             articles[domain] = []
+            detailed_data["total_requests"] += 1
             
             try:
                 # Attempt to send a request to the URL
                 r = send_request_through_tor(url=url.strip(), method="GET")
                 r.raise_for_status()  # Raise an error for HTTP response codes 4xx/5xx
+                
+                detailed_data["successful_requests"] += 1
                 
                 # Parse the response content
                 soup = BeautifulSoup(r.content, "html.parser")
@@ -312,22 +328,30 @@ class Scraper:
                 if not article_elements:
                     print(f"Warning: No article elements found for URL {url}")
                 
+                detailed_data["articles_found"] += len(article_elements)
+                
                 # Process each article
-                for result in article_elements:
+                for result in article_elements[:6]:
                     try:
                         href = result.find('a')["href"]
+                        if not str(href).startswith('http'):
+                            href = "http://"+domain+href
+
                         if href:
                             article_data = fetch_og_metadata(str(href))
                             if article_data:
                                 articles[domain].append(article_data)
+                                detailed_data["articles_processed"] += 1
                     except (TypeError, KeyError) as e:
-                        print(f"Error processing article link for URL {url}: {e}")
+                        detailed_data["errors"].append(f"Error processing article link for URL {url}: {e}")
                     except Exception as e:
-                        print(f"Unexpected error processing article for URL {url}: {e}")
-            
+                        detailed_data["errors"].append(f"Unexpected error processing article for URL {url}: {e}")
+                
             except requests.RequestException as e:
-                print(f"Request error for URL {url}: {e}")
+                detailed_data["failed_requests"] += 1
+                detailed_data["errors"].append(f"Request error for URL {url}: {e}")
             except Exception as e:
-                print(f"Unexpected error processing URL {url}: {e}")
+                detailed_data["errors"].append(f"Unexpected error processing URL {url}: {e}")
         
-        return articles
+        return {"articles": articles, "detailed_data": detailed_data}
+

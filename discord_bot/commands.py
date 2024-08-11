@@ -19,7 +19,6 @@ class Commands(commands.Cog):
             bot (commands.Bot): The Discord bot instance.
         """
         self.bot: discord.ext.commands.Bot = bot
-
     @app_commands.command(name="add_all_sources")
     @app_commands.describe(
         cat="the category you want the bot to send news in")
@@ -27,28 +26,47 @@ class Commands(commands.Cog):
         try:
             await interaction.response.defer()
             guild = self.bot.get_guild(interaction.guild_id)
-            channels = [channel.name for channel in cat.text_channels]
-            channel_names = session.query(DbStruct.sources).all()
+            existing_channel_ids = [channel.id for channel in cat.text_channels]
+            channels = session.query(DbStruct.channels).all()
+            channel_sources = session.query(DbStruct.sources).all()
+            for source in channel_sources:
+                if len(channels) < 1:
+                    channel = await guild.create_text_channel(name=source.source, category=cat, nsfw=True,news=True)
+                    obj = DbStruct.channels(source=source, channel_id=channel.id)
+                    session.add(obj)
+                    session.commit()
+                else:
+                    for channel in channels:
+                        try:
+                            if len(existing_channel_ids) < 1:
+                                    
+                                    channel = await guild.create_text_channel(name=channel.source, category=cat, nsfw=True,news=True)
+                                    print(channel.id)
+                                    print(source)
+                                    obj = DbStruct.channels(source=source.source, channel_id=channel.id)
+                                    session.add(obj)
+                                    session.commit()
 
-            for channel_source in channel_names:
-                try:
-                    print(channel_source.source)
-                    if channel_source.source not in channels:
-                        channel = await guild.create_text_channel(name=channel_source.source, category=cat, nsfw=True)
-                        print(channel.id)
-                        print(channel_source.source)
-                        obj = DbStruct.channels(source=channel_source.source, channel_id=channel.id)
-                        session.add(obj)
-                        session.commit()
-                except Exception as e:
-                    session.rollback()  # Roll back the transaction in case of an error
-                    print(f"Error processing source {channel_source.source}: {e}")
-
-            embed = await create_embed("Success", "", color=discord.Color.green())
-            await interaction.followup.send(embed=embed)
+                            else:    
+                                for id in existing_channel_ids:
+                                    if id in [c.channel_id for c in channels]:
+                                        print(f"Channel with {source} already exists.")
+                                    else:
+                                        channel = await guild.create_text_channel(name=channel.source, category=cat, nsfw=True,news=True)
+                                        print(channel.id)
+                                        print(source)
+                                        obj = DbStruct.channels(source=source, channel_id=channel.id)
+                                        session.add(obj)
+                                        session.commit()
+                                
+                        except Exception as e:
+                            session.rollback()  # Roll back the transaction in case of an error
+                            print(f"Error processing source {source}: {e}")
         except Exception as e:
-            print(f"Error in add_all_sources: {e}")
+            print(f"Error during operation: {e}")
 
+        embed = await create_embed("Success", "", color=discord.Color.green())
+        await interaction.followup.send(embed=embed)
     @app_commands.command(name="add_new_source")
     @app_commands.describe(
         link="The URL of the website.",

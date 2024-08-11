@@ -1,1 +1,1 @@
-{'https://www.bakhtarnews.af/ar/category/news-ar/': {'articles_parent': {'element': 'ul', 'attrs': {'id': 'posts-container'}}, 'article_obj': {'element': 'li', 'attrs': {'class': 'post-item'}}, 'href': {'a': 'href'}}}
+{'https://alezza.media/index.php?/category/34': {'articles_parent': {'element': 'ul', 'attrs': {'id': 'thumbnails'}}, 'article_obj': {'element': 'li', 'attrs': {'class': 'gdthumb'}}, 'href': {'a': 'href'}}}
