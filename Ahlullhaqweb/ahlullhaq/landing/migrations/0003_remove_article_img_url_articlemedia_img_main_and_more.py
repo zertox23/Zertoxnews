@@ -6,27 +6,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('landing', '0002_alter_article_article'),
+        ("landing", "0002_alter_article_article"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='article',
-            name='img_url',
+            model_name="article",
+            name="img_url",
         ),
         migrations.AddField(
-            model_name='articlemedia',
-            name='img_main',
+            model_name="articlemedia",
+            name="img_main",
             field=models.BooleanField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='article',
-            name='article',
+            model_name="article",
+            name="article",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='article',
-            name='date',
+            model_name="article",
+            name="date",
             field=models.DateTimeField(blank=True, default=None, null=True),
         ),
     ]

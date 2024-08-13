@@ -8,37 +8,59 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Article',
+            name="Article",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('img_url', models.TextField(blank=True, null=True)),
-                ('title', models.TextField()),
-                ('url', models.TextField()),
-                ('date', models.DateTimeField(blank=True, null=True)),
-                ('author', models.CharField(blank=True, max_length=255, null=True)),
-                ('brief', models.CharField(blank=True, max_length=255, null=True)),
-                ('article', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("img_url", models.TextField(blank=True, null=True)),
+                ("title", models.TextField()),
+                ("url", models.TextField()),
+                ("date", models.DateTimeField(blank=True, null=True)),
+                ("author", models.CharField(blank=True, max_length=255, null=True)),
+                ("brief", models.CharField(blank=True, max_length=255, null=True)),
+                ("article", models.TextField()),
             ],
             options={
-                'db_table': 'articles',
-                'ordering': ['-id'],
+                "db_table": "articles",
+                "ordering": ["-id"],
             },
         ),
         migrations.CreateModel(
-            name='ArticleMedia',
+            name="ArticleMedia",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file_data', models.BinaryField()),
-                ('media_type', models.CharField(max_length=255)),
-                ('article', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='media', to='landing.article')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("file_data", models.BinaryField()),
+                ("media_type", models.CharField(max_length=255)),
+                (
+                    "article",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="media",
+                        to="landing.article",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'articles_media',
+                "db_table": "articles_media",
             },
         ),
     ]

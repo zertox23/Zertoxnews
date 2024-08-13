@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "jmedia"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+discord-py = "^2.4.0"
+python-dotenv = "^1.0.1"
+sqlalchemy = "^2.0.32"
+mdformat = "^0.7.17"
+aiohttp = "^3.10.3"
+starlette = "^0.38.2"
+hypercorn = "^0.17.3"
+gunicorn = "19.7"
+uvicorn = "^0.30.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -20,10 +20,11 @@ TOKEN = os.environ.get("TOKEN")
 print(TOKEN)
 print(type(TOKEN))
 
+
 @bot.event
 async def on_ready():
     print("Bot is up and ready!")
-    
+
     await bot.load_extension("background_tasks")
     await bot.load_extension("commands")
 
@@ -38,6 +39,6 @@ async def on_ready():
         print(f"synced {len(synced)} command[s]")
     except Exception as e:
         logger.error(str(e))
-    
 
-bot.run(token=TOKEN)  
+
+bot.run(token=TOKEN)

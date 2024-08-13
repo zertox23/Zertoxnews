@@ -23,7 +23,6 @@ async def create_embed(title: str, content: str, color: discord.Color):
     return embed
 
 
-
 async def download_attachment(attachment):
     """
     Download the provided Discord attachment.
@@ -44,4 +43,3 @@ async def download_attachment(attachment):
                 return True
             else:
                 return False
-

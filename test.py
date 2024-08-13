@@ -1,1 +1,1 @@
-{'https://alezza.media/index.php?/category/34': {'articles_parent': {'element': 'ul', 'attrs': {'id': 'thumbnails'}}, 'article_obj': {'element': 'li', 'attrs': {'class': 'gdthumb'}}, 'href': {'a': 'href'}}}
+{'https://shahadaagency.com/': {'articles_parent': {'element': 'div', 'attrs': {'class': 'listing'}}, 'article_obj': {'element': 'article', 'attrs': {'class': 'type-post'}}, 'href': {'a': 'href'}}}

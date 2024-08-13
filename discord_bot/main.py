@@ -20,11 +20,12 @@ TOKEN = os.environ.get("TOKEN")
 print(TOKEN)
 print(type(TOKEN))
 
+
 @bot.event
 async def on_ready():
     guilds = bot.guilds
     print(guilds)
-    '''
+    """
     for guild in guilds.values():
         guild = bot.get_guild(guild)
         if len(sys.argv) > 1 and sys.argv[1] == "check":
@@ -38,10 +39,10 @@ async def on_ready():
                         obj = DbStruct.channels(source=channel_source.source, channel_id=channel.id)            
                         session.add(obj)
                         session.commit()
-    ''' 
+    """
     print("Bot is up and ready!")
-    
-    await bot.load_extension("background_tasks")
+
+    await bot.load_extension("background_tasks2_0")
     await bot.load_extension("commands")
 
     try:
@@ -55,6 +56,6 @@ async def on_ready():
         print(f"synced {len(synced)} command[s]")
     except Exception as e:
         logger.error(str(e))
-    
 
-bot.run(token=TOKEN)  
+
+bot.run(token=TOKEN)

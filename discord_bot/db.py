@@ -1,10 +1,18 @@
 import datetime
-from sqlalchemy import create_engine, Column, BigInteger, String, DateTime, Text, ForeignKey
-from sqlalchemy.dialects.mysql import LONGTEXT, LONGBLOB,BOOLEAN
+from sqlalchemy import (
+    create_engine,
+    Column,
+    BigInteger,
+    String,
+    DateTime,
+    Text,
+    ForeignKey,
+)
+from sqlalchemy.dialects.mysql import LONGTEXT, LONGBLOB, BOOLEAN
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from dotenv import load_dotenv
-import os 
+import os
 
 load_dotenv()
 MYSQL_URL = os.environ.get("MYSQL_URL")
@@ -12,20 +20,30 @@ print("MYSQL_URL=" + MYSQL_URL)
 
 Base = declarative_base()
 
+
 class DbStruct:
     class articles(Base):
         __tablename__ = "articles"
         id = Column(BigInteger, primary_key=True, autoincrement=True)
-        title = Column(Text, nullable=False)
-        url = Column(Text, nullable=False)
+        title = Column(Text, nullable=True)
+        url = Column(Text, nullable=True)
         date = Column(DateTime, default=datetime.datetime.now, nullable=True)
         author = Column(String(255), nullable=True)
-        brief = Column(String(255), nullable=True)
+        brief = Column(LONGTEXT, nullable=True)
         article = Column(LONGTEXT, nullable=True)
-        img_url = Column(Text, nullable=False)        
+        img_url = Column(Text, nullable=True)
         media = relationship("ArticleMedia", back_populates="article")
 
-        def __init__(self,title: str, url: str, author: str, brief: str, article: str, date: datetime.datetime = None,img_url=None):
+        def __init__(
+            self,
+            title: str,
+            url: str,
+            author: str,
+            brief: str,
+            article: str,
+            date: datetime.datetime = None,
+            img_url=None,
+        ):
             self.title = title
             self.url = url
             self.date = date if date else datetime.datetime.now()
@@ -37,13 +55,17 @@ class DbStruct:
     class ArticleMedia(Base):
         __tablename__ = "articles_media"
         id = Column(BigInteger, primary_key=True, autoincrement=True)
-        article_id = Column(BigInteger, ForeignKey('articles.id'), nullable=False)
-        file_data = Column(LONGBLOB, nullable=False)  # Consider using Binary for actual file data
+        article_id = Column(BigInteger, ForeignKey("articles.id"), nullable=False)
+        file_data = Column(
+            LONGBLOB, nullable=False
+        )  # Consider using Binary for actual file data
         media_type = Column(String(255), nullable=False)
-        img_main = Column(BOOLEAN,nullable=True)
+        img_main = Column(BOOLEAN, nullable=True)
         article = relationship("articles", back_populates="media")
 
-        def __init__(self, article_id: int, file_data: bytes, media_type: str,img_main:bool):
+        def __init__(
+            self, article_id: int, file_data: bytes, media_type: str, img_main: bool
+        ):
             self.article_id = article_id
             self.file_data = file_data
             self.media_type = media_type
@@ -66,6 +88,7 @@ class DbStruct:
 
         def __init__(self, source: str):
             self.source = source
+
 
 class BotDb:
     def __init__(self) -> None:
