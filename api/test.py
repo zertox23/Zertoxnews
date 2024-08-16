@@ -1,1 +1,0 @@
-{'https://shahadaagency.com/': {'articles_parent': {'element': 'div', 'attrs': {'class': 'listing'}}, 'article_obj': {'element': 'article', 'attrs': {'class': 'type-post'}}, 'href': {'a': 'href'}}}

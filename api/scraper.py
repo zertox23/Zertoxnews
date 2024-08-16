@@ -10,6 +10,10 @@ import markdownify
 import os
 from urllib.parse import urljoin
 from models import ResponseObj
+from loguru import logger
+
+
+logger.add("logs_.log")
 
 
 IP_DIDNT_CHANGE = "IP didn't change, sorry try later" 
@@ -91,25 +95,50 @@ class Scraper:
         with open("scrapes.json", "r") as f:
             scrapes = json.load(f)
         for url in scrapes:
-            domain = urlparse(url).netloc
-            articles[domain] = []
-            r = await send_request_through_tor(url=url.strip(), method="GET")
-            if r.request != IP_DIDNT_CHANGE:
+                domain = urlparse(url).netloc
+                articles[domain] = []
+                r = await send_request_through_tor(url=url.strip(), method="GET")
+                r.request.raise_for_status()  # Raise an error for HTTP response codes 4xx/5xx
+                # Parse the response content
                 soup = BeautifulSoup(r.content, "html.parser")
+
+                # Find the articles parent element
+                parent_element = scrapes[url]["articles_parent"]
                 results = soup.find(
-                    scrapes[url]["articles_parent"]["element"],
-                    attrs=scrapes[url]["articles_parent"]["attrs"],
+                    parent_element["element"], attrs=parent_element["attrs"]
                 )
-                for result in results:
-                    x = result.find("a")
-                    if isinstance(x,int) or x is None:
-                        continue
-                    x = x["href"]
-                    if x:
-                        if not str(x).startswith("http"):
-                            x = domain + x
-                            x = "http://" + x
-                        articles[domain].append(await fetch_og_metadata(str(x)))
+
+                if results is None:
+                    print(f"Warning: No parent element found for URL {url}")
+                    continue
+
+                # Write the results to a file for debugging
+                # Find all article objects
+                article_obj = scrapes[url]["article_obj"]
+                article_elements = results.find_all(
+                    article_obj["element"], attrs=article_obj["attrs"]
+                )
+
+                if not article_elements:
+                    print(f"Warning: No article elements found for URL {url}")
+
+
+                # Process each article
+                for result in article_elements[:6]:
+                    try:
+                        href = result.find("a")["href"]
+                        if not str(href).startswith("http"):
+                            href = "http://" + domain + href
+
+                        if href:
+                            article_data = await fetch_og_metadata(str(href))
+                            if article_data:
+                                articles[domain].append(article_data)
+                    except (TypeError, KeyError) as e:
+                        logger.error(e)
+                    except Exception as e:
+                        logger.error(e)
+
         return articles
 
     async def test_new_web(self, scrapes):

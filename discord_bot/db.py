@@ -25,13 +25,12 @@ class DbStruct:
     class articles(Base):
         __tablename__ = "articles"
         id = Column(BigInteger, primary_key=True, autoincrement=True)
-        title = Column(Text, nullable=True)
-        url = Column(Text, nullable=True)
+        title = Column(LONGTEXT, nullable=True)
+        url = Column(LONGTEXT, nullable=True)
         date = Column(DateTime, default=datetime.datetime.now, nullable=True)
-        author = Column(String(255), nullable=True)
+        author = Column(LONGTEXT, nullable=True)
         brief = Column(LONGTEXT, nullable=True)
         article = Column(LONGTEXT, nullable=True)
-        img_url = Column(Text, nullable=True)
         media = relationship("ArticleMedia", back_populates="article")
 
         def __init__(
@@ -42,7 +41,6 @@ class DbStruct:
             brief: str,
             article: str,
             date: datetime.datetime = None,
-            img_url=None,
         ):
             self.title = title
             self.url = url
@@ -50,7 +48,6 @@ class DbStruct:
             self.author = author
             self.brief = brief
             self.article = article
-            self.img_url = img_url
 
     class ArticleMedia(Base):
         __tablename__ = "articles_media"
